@@ -1,23 +1,46 @@
-import logo from './logo.svg';
-import './App.css';
+import "./App.css";
+import { useState, useEffect } from "react";
+import Country from "./components/Country";
+import Cart from "./components/Cart";
 
 function App() {
+  const [country, setCountry] = useState([]);
+  const [carts, setCarts] = useState([]);
+  useEffect(() => {
+    fetch("https://restcountries.com/v2/all")
+      .then((res) => res.json())
+      .then((data) => {
+        setCountry(data);
+      });
+  }, []);
+
+  const handleAddCountry = (country) => {
+    // console.log('Country Added', country);
+    const newCart = [...carts, country];
+    setCarts(newCart);
+  };
+  // console.log(cart)
+
+  const cart = {
+    boxShadow: "3px 2px 15px 0 gray",
+    padding: "1rem",
+    marginBottom: "3rem",
+  };
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="app">
+      <div style={cart}>
+        <h2>Country Loaded: {country.length}</h2>
+        <Cart carts={carts}></Cart>
+      </div>
+      <div className="country">
+        {country.map((country) => (
+          <Country
+            country={country}
+            key={country.alpha3Code}
+            handleAddCountry={handleAddCountry}
+          ></Country>
+        ))}
+      </div>
     </div>
   );
 }
